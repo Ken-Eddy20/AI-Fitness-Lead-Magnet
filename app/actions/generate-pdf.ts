@@ -1,28 +1,12 @@
 "use server";
 
 import { jsPDF } from "jspdf";
-
-type FormData = {
-  weight: string;
-  weightUnit: "kg" | "lbs";
-  height: string;
-  heightUnit: "cm" | "ft-in";
-  age: string;
-  gender: "Male" | "Female" | "Other";
-  goal: "Lose weight" | "Build muscle" | "Maintain" | "Get toned" | "Improve health";
-  targetWeight: string;
-  goalDate?: Date;
-  goalTimeframe?: string;
-  workoutPreference: string[];
-  workoutDays: string;
-  gymAccess: "Yes" | "No" | "Limited Equipment";
-  activityLevel: string;
-  dietRestriction: string;
-  otherDietDetails?: string;
-  mealsPerDay: string;
-  biggestStruggle: string;
-  email: string;
-};
+import {
+  generateWorkoutPlan,
+  generateNutritionPlan,
+  generateLifestyleTips,
+  type FormData,
+} from "@/lib/plan-generator";
 
 export async function generatePDF(formData: FormData, bmi: number) {
   try {
@@ -31,37 +15,54 @@ export async function generatePDF(formData: FormData, bmi: number) {
     const pageHeight = doc.internal.pageSize.getHeight();
     let yPosition = 20;
 
+    // Generate plans
+    const workoutPlan = generateWorkoutPlan(formData);
+    const nutritionPlan = generateNutritionPlan(formData, bmi);
+    const lifestyleTips = generateLifestyleTips(formData);
+
+    const addNewPageIfNeeded = (requiredSpace: number) => {
+      if (yPosition + requiredSpace > pageHeight - 20) {
+        doc.addPage();
+        yPosition = 20;
+      }
+    };
+
     // Title
-    doc.setFontSize(24);
-    doc.setTextColor(16, 185, 129); // Emerald color
-    doc.text("Your Personalized Fitness Plan", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 15;
+    doc.setFontSize(28);
+    doc.setTextColor(220, 38, 38); // Red from Eleven26
+    doc.text("ELEVEN26 GYM", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 12;
+
+    doc.setFontSize(18);
+    doc.setTextColor(51, 51, 51);
+    doc.text("Your Custom Fitness Blueprint", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 10;
 
     // Subtitle
     doc.setFontSize(12);
-    doc.setTextColor(100, 116, 139); // Slate color
+    doc.setTextColor(100, 100, 100);
     doc.text(
-      `Goal: ${formData.goal} | Target: ${formData.targetWeight}${formData.weightUnit}`,
+      `Goal: ${formData.goal.toUpperCase()} | Target: ${formData.targetWeight}${formData.weightUnit}`,
       pageWidth / 2,
       yPosition,
       { align: "center" }
     );
-    yPosition += 12;
+    yPosition += 15;
 
-    // Fitness Stats Section
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
+    // Your Statistics Section
+    doc.setFontSize(16);
+    doc.setTextColor(51, 51, 51);
     doc.text("Your Statistics", 20, yPosition);
-    yPosition += 8;
+    yPosition += 10;
 
     doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
     const statsText = [
       `Current Weight: ${formData.weight} ${formData.weightUnit}`,
       `Height: ${formData.height} ${formData.heightUnit}`,
       `Age: ${formData.age}`,
       `Gender: ${formData.gender}`,
       `BMI: ${bmi.toFixed(1)}`,
-      `Activity Level: ${formData.activityLevel}`,
     ];
 
     statsText.forEach((text) => {
@@ -69,74 +70,24 @@ export async function generatePDF(formData: FormData, bmi: number) {
       yPosition += 6;
     });
 
-    yPosition += 5;
-
-    // Calculate macros and calories for the PDF
-    const weightInKg =
-      formData.weightUnit === "kg"
-        ? parseFloat(formData.weight)
-        : parseFloat(formData.weight) * 0.453592;
-    const heightInM =
-      formData.heightUnit === "cm"
-        ? parseFloat(formData.height) / 100
-        : parseFloat(formData.height) * 0.0254;
-
-    let bmr = 0;
-    if (formData.gender === "Male") {
-      bmr = 10 * weightInKg + 6.25 * (heightInM * 100) - 5 * parseFloat(formData.age) + 5;
-    } else {
-      bmr = 10 * weightInKg + 6.25 * (heightInM * 100) - 5 * parseFloat(formData.age) - 161;
-    }
-
-    let activityMultiplier = 1.2;
-    if (formData.activityLevel.includes("Lightly active")) {
-      activityMultiplier = 1.375;
-    } else if (formData.activityLevel.includes("Moderately active")) {
-      activityMultiplier = 1.55;
-    } else if (formData.activityLevel.includes("Very active")) {
-      activityMultiplier = 1.725;
-    }
-
-    const tdee = Math.round(bmr * activityMultiplier);
-    let dailyCalories = tdee;
-
-    if (formData.goal === "Lose weight") {
-      dailyCalories = Math.round(tdee * 0.8);
-    } else if (formData.goal === "Build muscle") {
-      dailyCalories = Math.round(tdee * 1.1);
-    }
-
-    let protein = 0,
-      carbs = 0,
-      fats = 0;
-    if (formData.goal === "Lose weight") {
-      protein = Math.round((dailyCalories * 0.4) / 4);
-      carbs = Math.round((dailyCalories * 0.3) / 4);
-      fats = Math.round((dailyCalories * 0.3) / 9);
-    } else if (formData.goal === "Build muscle") {
-      protein = Math.round((dailyCalories * 0.3) / 4);
-      carbs = Math.round((dailyCalories * 0.5) / 4);
-      fats = Math.round((dailyCalories * 0.2) / 9);
-    } else {
-      protein = Math.round((dailyCalories * 0.25) / 4);
-      carbs = Math.round((dailyCalories * 0.5) / 4);
-      fats = Math.round((dailyCalories * 0.25) / 9);
-    }
-
-    // Nutrition Plan Section
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Nutrition Plan", 20, yPosition);
     yPosition += 8;
 
+    // Nutrition Plan Section
+    addNewPageIfNeeded(60);
+    doc.setFontSize(16);
+    doc.setTextColor(51, 51, 51);
+    doc.text("Nutrition Plan", 20, yPosition);
+    yPosition += 10;
+
     doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
     const nutritionText = [
-      `Daily Calories: ${dailyCalories} kcal`,
-      `Protein: ${protein}g per day`,
-      `Carbohydrates: ${carbs}g per day`,
-      `Fats: ${fats}g per day`,
-      `Diet Preference: ${formData.dietRestriction}`,
-      `Meals Per Day: ${formData.mealsPerDay}`,
+      `Daily Calories: ${nutritionPlan.dailyCalories} kcal`,
+      `Protein: ${nutritionPlan.protein}g per day`,
+      `Carbohydrates: ${nutritionPlan.carbs}g per day`,
+      `Fats: ${nutritionPlan.fats}g per day`,
+      `Diet Type: ${formData.dietRestriction}`,
+      `Nutrition Focus: ${formData.dietaryFocus}`,
     ];
 
     nutritionText.forEach((text) => {
@@ -144,60 +95,144 @@ export async function generatePDF(formData: FormData, bmi: number) {
       yPosition += 6;
     });
 
-    yPosition += 5;
+    yPosition += 6;
+
+    doc.setFontSize(12);
+    doc.setTextColor(51, 51, 51);
+    doc.text("Sample Daily Meal Plan:", 25, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    nutritionPlan.mealPlan.forEach((mealSection) => {
+      addNewPageIfNeeded(20);
+      doc.setTextColor(220, 38, 38);
+      doc.text(`${mealSection.meal}:`, 30, yPosition);
+      yPosition += 5;
+
+      doc.setTextColor(0, 0, 0);
+      mealSection.examples.slice(0, 2).forEach((example) => {
+        doc.text(`• ${example}`, 35, yPosition);
+        yPosition += 5;
+      });
+      yPosition += 2;
+    });
+
+    yPosition += 6;
 
     // Workout Plan Section
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
+    addNewPageIfNeeded(80);
+    doc.setFontSize(16);
+    doc.setTextColor(51, 51, 51);
     doc.text("Workout Plan", 20, yPosition);
-    yPosition += 8;
+    yPosition += 10;
 
-    doc.setFontSize(11);
-    const workoutText = [
-      `Days Per Week: ${formData.workoutDays} days`,
-      `Preferred Types: ${formData.workoutPreference.join(", ")}`,
-      `Gym Access: ${formData.gymAccess}`,
-    ];
-
-    workoutText.forEach((text) => {
-      doc.text(text, 25, yPosition);
-      yPosition += 6;
-    });
-
-    yPosition += 5;
-
-    // Recommendations Section
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.text("Key Recommendations", 20, yPosition);
+    doc.text(workoutPlan.title, 25, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    doc.text(workoutPlan.description, 25, yPosition, { maxWidth: 160 });
+    yPosition += 12;
+
+    // Weekly schedule
+    doc.setFontSize(11);
+    doc.setTextColor(51, 51, 51);
+    doc.text("Weekly Schedule:", 25, yPosition);
     yPosition += 8;
 
-    doc.setFontSize(11);
-    const recommendations = [
-      "• Warm up 5-10 minutes before each workout",
-      "• For strength exercises: 3-4 sets of 8-12 reps",
-      "• Rest 60-90 seconds between sets",
-      "• Aim for 7-9 hours of quality sleep each night",
-      "• Drink at least 2-3 liters of water daily",
-      "• Take 1-2 complete rest days per week",
-    ];
-
-    recommendations.forEach((text) => {
-      if (yPosition > pageHeight - 30) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      doc.text(text, 25, yPosition);
+    doc.setFontSize(10);
+    workoutPlan.weekly.slice(0, 6).forEach((day) => {
+      addNewPageIfNeeded(30);
+      doc.setTextColor(220, 38, 38);
+      doc.text(`${day.day} - ${day.focus} (${day.duration})`, 30, yPosition);
       yPosition += 6;
+
+      doc.setTextColor(0, 0, 0);
+      day.exercises.slice(0, 3).forEach((exercise) => {
+        doc.text(`• ${exercise}`, 35, yPosition);
+        yPosition += 4;
+      });
+      yPosition += 2;
     });
 
-    yPosition += 8;
+    yPosition += 6;
+
+    // Lifestyle Tips Section
+    addNewPageIfNeeded(60);
+    doc.setFontSize(16);
+    doc.setTextColor(51, 51, 51);
+    doc.text("Lifestyle Tips for Success", 20, yPosition);
+    yPosition += 12;
+
+    doc.setFontSize(11);
+    doc.setTextColor(220, 38, 38);
+    doc.text("Sleep & Recovery:", 25, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    const sleepLines = doc.splitTextToSize(lifestyleTips.sleep, 160);
+    sleepLines.forEach((line: string) => {
+      addNewPageIfNeeded(10);
+      doc.text(line, 30, yPosition);
+      yPosition += 5;
+    });
+
+    yPosition += 6;
+
+    doc.setFontSize(11);
+    doc.setTextColor(220, 38, 38);
+    doc.text("Hydration:", 25, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    const hydrationLines = doc.splitTextToSize(lifestyleTips.hydration, 160);
+    hydrationLines.forEach((line: string) => {
+      addNewPageIfNeeded(10);
+      doc.text(line, 30, yPosition);
+      yPosition += 5;
+    });
+
+    yPosition += 6;
+
+    doc.setFontSize(11);
+    doc.setTextColor(220, 38, 38);
+    doc.text("Recovery & Injury Prevention:", 25, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    const recoveryLines = doc.splitTextToSize(lifestyleTips.recovery, 160);
+    recoveryLines.forEach((line: string) => {
+      addNewPageIfNeeded(10);
+      doc.text(line, 30, yPosition);
+      yPosition += 5;
+    });
+
+    yPosition += 6;
+
+    doc.setFontSize(11);
+    doc.setTextColor(220, 38, 38);
+    doc.text("Stay Motivated:", 25, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    const motivationLines = doc.splitTextToSize(lifestyleTips.motivation, 160);
+    motivationLines.forEach((line: string) => {
+      addNewPageIfNeeded(10);
+      doc.text(line, 30, yPosition);
+      yPosition += 5;
+    });
 
     // Footer
-    doc.setFontSize(10);
-    doc.setTextColor(100, 116, 139);
-    doc.text(`Generated for: ${formData.email}`, 20, pageHeight - 15);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, pageHeight - 10);
+    yPosition += 15;
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated for: ${formData.email}`, 20, pageHeight - 10);
+    doc.text(`Date: ${new Date().toLocaleDateString()} | Eleven26 Gym`, pageWidth - 100, pageHeight - 10);
 
     // Convert to base64 for transmission
     const pdfData = doc.output("arraybuffer");

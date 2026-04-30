@@ -12,10 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react"
-import { format } from "date-fns"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ResultsPage from "./results-page"
 
@@ -28,21 +25,10 @@ const formSchema = z.object({
   gender: z.enum(["Male", "Female", "Other"]),
   goal: z.enum(["Lose weight", "Build muscle", "Maintain", "Get toned", "Improve health"]),
   targetWeight: z.string().min(1, "Target weight is required"),
-  goalDate: z.date().optional(),
-  goalTimeframe: z.string().optional(),
   workoutPreference: z.array(z.string()).min(1, "Select at least one workout type"),
   workoutDays: z.string().min(1, "Please select number of days"),
-  gymAccess: z.enum(["Yes", "No", "Limited Equipment"]),
-  activityLevel: z.enum([
-    "Sedentary (mostly sitting)",
-    "Lightly active (some movement)",
-    "Moderately active (walk/workout a few times/week)",
-    "Very active (daily exercise/manual labor)",
-  ]),
   dietRestriction: z.string().min(1, "Please select a diet option"),
-  otherDietDetails: z.string().optional(),
-  mealsPerDay: z.string().min(1, "Please select number of meals"),
-  biggestStruggle: z.string().min(1, "Please share your biggest struggle"),
+  dietaryFocus: z.string().min(1, "Please tell us about your nutrition focus"),
   email: z.string().email("Please enter a valid email"),
 })
 
@@ -55,14 +41,10 @@ const questions = [
   "gender",
   "goal",
   "targetWeight",
-  "goalDate",
   "workoutPreference",
   "workoutDays",
-  "gymAccess",
-  "activityLevel",
   "dietRestriction",
-  "mealsPerDay",
-  "biggestStruggle",
+  "dietaryFocus",
   "email",
 ]
 
@@ -90,16 +72,10 @@ export default function FitnessAssessment() {
       gender: undefined,
       goal: undefined,
       targetWeight: "",
-      goalDate: undefined,
-      goalTimeframe: "",
       workoutPreference: [],
       workoutDays: "",
-      gymAccess: undefined,
-      activityLevel: undefined,
       dietRestriction: "",
-      otherDietDetails: "",
-      mealsPerDay: "",
-      biggestStruggle: "",
+      dietaryFocus: "",
       email: "",
     },
   })
@@ -113,9 +89,7 @@ export default function FitnessAssessment() {
     // Custom validation for each field type
     switch (currentField) {
       case "weight":
-        return typeof currentValue === "string" && currentValue.trim().length > 0
       case "height":
-        return typeof currentValue === "string" && currentValue.trim().length > 0
       case "age":
         return typeof currentValue === "string" && currentValue.trim().length > 0
       case "gender":
@@ -126,26 +100,12 @@ export default function FitnessAssessment() {
         )
       case "targetWeight":
         return typeof currentValue === "string" && currentValue.trim().length > 0
-      case "goalDate":
-        return true // Optional field
       case "workoutPreference":
         return Array.isArray(currentValue) && currentValue.length > 0
       case "workoutDays":
         return typeof currentValue === "string" && currentValue.trim().length > 0
-      case "gymAccess":
-        return currentValue === "Yes" || currentValue === "No" || currentValue === "Limited Equipment"
-      case "activityLevel":
-        return [
-          "Sedentary (mostly sitting)",
-          "Lightly active (some movement)",
-          "Moderately active (walk/workout a few times/week)",
-          "Very active (daily exercise/manual labor)",
-        ].includes(currentValue as string)
       case "dietRestriction":
-        return typeof currentValue === "string" && currentValue.trim().length > 0
-      case "mealsPerDay":
-        return typeof currentValue === "string" && currentValue.trim().length > 0
-      case "biggestStruggle":
+      case "dietaryFocus":
         return typeof currentValue === "string" && currentValue.trim().length > 0
       case "email":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -379,50 +339,8 @@ export default function FitnessAssessment() {
               </div>
             )}
 
-            {/* Goal Date Question */}
-            {currentQuestion === 6 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">By when would you like to achieve this goal?</h2>
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !watchAllFields.goalDate && "text-muted-foreground",
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {watchAllFields.goalDate ? format(watchAllFields.goalDate, "PPP") : "Pick a date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={watchAllFields.goalDate}
-                          onSelect={(date) => setValue("goalDate", date)}
-                          initialFocus
-                          disabled={(date) => date < new Date()}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div>
-                    <p className="text-sm text-zinc-500 mb-2">Or enter a timeframe:</p>
-                    <Input
-                      placeholder="e.g., '3 months', '6 weeks'"
-                      {...register("goalTimeframe")}
-                      className="text-lg"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Workout Preference Question */}
-            {currentQuestion === 7 && (
+            {currentQuestion === 6 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">What type of workouts do you enjoy/prefer?</h2>
                 <p className="text-sm text-zinc-500">Select all that apply</p>
@@ -464,7 +382,7 @@ export default function FitnessAssessment() {
             )}
 
             {/* Workout Days Question */}
-            {currentQuestion === 8 && (
+            {currentQuestion === 7 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">How many days per week can you realistically work out?</h2>
                 <Select value={watchAllFields.workoutDays || ""} onValueChange={(value) => setValue("workoutDays", value)}>
@@ -483,53 +401,10 @@ export default function FitnessAssessment() {
               </div>
             )}
 
-            {/* Gym Access Question */}
-            {currentQuestion === 9 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Do you have access to a gym or home equipment?</h2>
-                <RadioGroup
-                  value={watchAllFields.gymAccess || ""}
-                  onValueChange={(value) => setValue("gymAccess", value as any)}
-                  className="space-y-3"
-                >
-                  {["Yes", "No", "Limited Equipment"].map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={`gym-${option}`} />
-                      <Label htmlFor={`gym-${option}`}>{option}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-                {errors.gymAccess && <p className="text-red-500 text-sm mt-1">{errors.gymAccess.message}</p>}
-              </div>
-            )}
 
-            {/* Activity Level Question */}
-            {currentQuestion === 10 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">What is your current activity level?</h2>
-                <RadioGroup
-                  value={watchAllFields.activityLevel || ""}
-                  onValueChange={(value) => setValue("activityLevel", value as any)}
-                  className="space-y-3"
-                >
-                  {[
-                    "Sedentary (mostly sitting)",
-                    "Lightly active (some movement)",
-                    "Moderately active (walk/workout a few times/week)",
-                    "Very active (daily exercise/manual labor)",
-                  ].map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={`activity-${option}`} />
-                      <Label htmlFor={`activity-${option}`}>{option}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-                {errors.activityLevel && <p className="text-red-500 text-sm mt-1">{errors.activityLevel.message}</p>}
-              </div>
-            )}
 
             {/* Diet Restriction Question */}
-            {currentQuestion === 11 && (
+            {currentQuestion === 8 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">Do you follow a specific diet or have food restrictions?</h2>
                 <RadioGroup
@@ -537,64 +412,36 @@ export default function FitnessAssessment() {
                   onValueChange={(value) => setValue("dietRestriction", value)}
                   className="space-y-3"
                 >
-                  {["Vegan", "Vegetarian", "Keto", "Low-carb", "Halal", "No restrictions", "Other"].map((option) => (
+                  {["Vegan", "Vegetarian", "Keto", "Low-carb", "Halal", "Paleo", "No restrictions"].map((option) => (
                     <div key={option} className="flex items-center space-x-2">
                       <RadioGroupItem value={option} id={`diet-${option}`} />
                       <Label htmlFor={`diet-${option}`}>{option}</Label>
                     </div>
                   ))}
                 </RadioGroup>
-                {watchAllFields.dietRestriction === "Other" && (
-                  <div className="mt-3">
-                    <Textarea
-                      placeholder="Please specify your dietary restrictions"
-                      {...register("otherDietDetails")}
-                    />
-                  </div>
-                )}
                 {errors.dietRestriction && (
                   <p className="text-red-500 text-sm mt-1">{errors.dietRestriction.message}</p>
                 )}
               </div>
             )}
 
-            {/* Meals Per Day Question */}
-            {currentQuestion === 12 && (
+            {/* Dietary Focus Question */}
+            {currentQuestion === 9 && (
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold">How many meals do you eat per day on average?</h2>
-                <Select onValueChange={(value) => setValue("mealsPerDay", value)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select number of meals" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[1, 2, 3, 4, 5, 6, "7+"].map((meal) => (
-                      <SelectItem key={meal.toString()} value={meal.toString()}>
-                        {meal} {meal === 1 ? "meal" : "meals"}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.mealsPerDay && <p className="text-red-500 text-sm mt-1">{errors.mealsPerDay.message}</p>}
-              </div>
-            )}
-
-            {/* Biggest Struggle Question */}
-            {currentQuestion === 13 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">What's your biggest struggle with fitness or nutrition?</h2>
+                <h2 className="text-xl font-semibold">What's your main focus with nutrition?</h2>
                 <Textarea
-                  placeholder="Tell us about your challenges..."
-                  {...register("biggestStruggle")}
+                  placeholder="e.g., Build muscle, lose fat, increase energy, improve digestion..."
+                  {...register("dietaryFocus")}
                   className="min-h-[120px]"
                 />
-                {errors.biggestStruggle && (
-                  <p className="text-red-500 text-sm mt-1">{errors.biggestStruggle.message}</p>
+                {errors.dietaryFocus && (
+                  <p className="text-red-500 text-sm mt-1">{errors.dietaryFocus.message}</p>
                 )}
               </div>
             )}
 
             {/* Email Question */}
-            {currentQuestion === 14 && (
+            {currentQuestion === 10 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">What's your email so we can send your plan?</h2>
                 <Input type="email" placeholder="Enter your email" {...register("email")} className="text-lg" />

@@ -8,28 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Dumbbell, Salad, Clock, Heart, Download, CheckCircle } from "lucide-react"
 import { generatePDF } from "@/app/actions/generate-pdf"
-
-type FormData = {
-  weight: string
-  weightUnit: "kg" | "lbs"
-  height: string
-  heightUnit: "cm" | "ft-in"
-  age: string
-  gender: "Male" | "Female" | "Other"
-  goal: "Lose weight" | "Build muscle" | "Maintain" | "Get toned" | "Improve health"
-  targetWeight: string
-  goalDate?: Date
-  goalTimeframe?: string
-  workoutPreference: string[]
-  workoutDays: string
-  gymAccess: "Yes" | "No" | "Limited Equipment"
-  activityLevel: string
-  dietRestriction: string
-  otherDietDetails?: string
-  mealsPerDay: string
-  biggestStruggle: string
-  email: string
-}
+import { type FormData, generateWorkoutPlan, generateNutritionPlan, generateLifestyleTips } from "@/lib/plan-generator"
 
 export default function ResultsPage({ formData }: { formData: FormData }) {
   const [activeTab, setActiveTab] = useState("fitness")
