@@ -426,17 +426,16 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-white dark:bg-zinc-950 rounded-xl shadow-xl p-6 md:p-10"
+      className="bg-card dark:bg-card rounded-2xl shadow-2xl p-6 md:p-10 border border-border"
     >
-      <div className="mb-8 text-center">
-        <Badge className="mb-4 bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 hover:bg-emerald-200 dark:hover:bg-emerald-800">
-          Your Plan is Ready!
+      <div className="mb-10 text-center">
+        <Badge className="mb-4 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
+          Your Blueprint Ready
         </Badge>
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">Your Personalized Fitness Journey</h1>
-        <p className="text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-          Based on your goals to {formData.goal.toLowerCase()}, we've created a customized plan to help you reach your
-          target weight of {formData.targetWeight}
-          {formData.weightUnit}.
+        <h1 className="text-3xl md:text-4xl font-black mb-3 text-foreground">Your Fitness Blueprint</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          Customized training and nutrition plan designed to help you {formData.goal.toLowerCase()} and reach your target
+          of {formData.targetWeight} {formData.weightUnit}.
         </p>
       </div>
 
@@ -444,7 +443,7 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center">
-              <Dumbbell className="mr-2 h-5 w-5 text-emerald-500" /> Fitness Stats
+              <Dumbbell className="mr-2 h-5 w-5 text-accent" /> Fitness Stats
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -476,7 +475,7 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center">
-              <Salad className="mr-2 h-5 w-5 text-emerald-500" /> Nutrition Plan
+              <Salad className="mr-2 h-5 w-5 text-accent" /> Nutrition Plan
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -559,7 +558,7 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
                       <ul className="space-y-2">
                         {workout.exercises.map((exercise, i) => (
                           <li key={i} className="flex items-start">
-                            <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                             <span>{exercise}</span>
                           </li>
                         ))}
@@ -576,23 +575,23 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
                 <CardContent className="pt-6">
                   <ul className="space-y-3">
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Warm up for 5-10 minutes before each workout</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>For strength exercises: 3-4 sets of 8-12 reps</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Rest 60-90 seconds between sets</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Increase weight when you can complete all sets with good form</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Cool down and stretch for 5-10 minutes after each workout</span>
                     </li>
                   </ul>
@@ -627,23 +626,23 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
                 <CardContent className="pt-6">
                   <ul className="space-y-3">
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Aim for {dailyCalories} calories per day</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Protein target: {macros.protein}g daily (focus on lean sources)</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Carbs target: {macros.carbs}g daily (prioritize complex carbs)</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Fats target: {macros.fats}g daily (focus on healthy fats)</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Drink at least 2-3 liters of water daily</span>
                     </li>
                   </ul>
@@ -657,19 +656,19 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
                 <CardContent className="pt-6">
                   <ul className="space-y-3">
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Prep meals 2-3 times per week to save time</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Use a food scale to measure portions accurately</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Track your food intake with MyFitnessPal or similar app</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Allow yourself one "flexible" meal per week for sustainability</span>
                     </li>
                   </ul>
@@ -687,19 +686,19 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
                 <CardContent className="pt-6">
                   <ul className="space-y-3">
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Aim for 7-9 hours of quality sleep each night</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Establish a consistent sleep schedule</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Take 1-2 complete rest days per week</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Consider foam rolling and stretching on rest days</span>
                     </li>
                   </ul>
@@ -713,19 +712,19 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
                 <CardContent className="pt-6">
                   <ul className="space-y-3">
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Aim for 8,000-10,000 steps daily</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Take movement breaks every hour if you have a desk job</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Consider a standing desk or active sitting options</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Take the stairs instead of elevators when possible</span>
                     </li>
                   </ul>
@@ -739,19 +738,19 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
                 <CardContent className="pt-6">
                   <ul className="space-y-3">
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Practice 5-10 minutes of meditation daily</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Incorporate deep breathing exercises throughout the day</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Spend time in nature when possible</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Consider journaling to process thoughts and track progress</span>
                     </li>
                   </ul>
@@ -765,19 +764,19 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
                 <CardContent className="pt-6">
                   <ul className="space-y-3">
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Weigh yourself at the same time 1-2 times per week</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Take progress photos every 2-4 weeks</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Track workout performance (weights, reps, time)</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-accent mr-2 mt-0.5 flex-shrink-0" />
                       <span>Measure body circumferences monthly (waist, hips, chest, arms)</span>
                     </li>
                   </ul>
@@ -790,12 +789,12 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
 
 
 
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Download Your Plan</h2>
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-4 text-foreground">Get Your Plan</h2>
         <Button
           onClick={handleDownloadPDF}
           disabled={isDownloading}
-          className="flex items-center bg-emerald-600 hover:bg-emerald-700 text-white"
+          className="flex items-center bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-lg hover:shadow-xl transition-all"
         >
           <Download className="mr-2 h-4 w-4" /> {isDownloading ? "Generating PDF..." : "Download PDF"}
         </Button>

@@ -114,20 +114,20 @@ export default function FitnessAssessment() {
   }
 
   return (
-    <div className="bg-white dark:bg-zinc-950 rounded-xl shadow-xl p-6 md:p-10">
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">Elite Fitness Assessment</h1>
-        <p className="text-zinc-500 dark:text-zinc-400 text-center">
-          Get your personalized fitness plan in just a few minutes
+    <div className="bg-card dark:bg-card rounded-2xl shadow-2xl p-6 md:p-10 border border-border">
+      <div className="mb-10">
+        <h1 className="text-3xl md:text-4xl font-black text-center mb-2 text-foreground">Your Fitness Blueprint</h1>
+        <p className="text-muted-foreground text-center text-lg">
+          Custom training and nutrition plan designed for your goals
         </p>
-        <div className="w-full bg-zinc-100 dark:bg-zinc-800 h-2 rounded-full mt-6">
+        <div className="w-full bg-secondary dark:bg-secondary h-3 rounded-full mt-8 overflow-hidden">
           <div
-            className="bg-emerald-500 h-2 rounded-full transition-all duration-300 ease-in-out"
-            style={{ width: `${progress}%` }}
+            className="bg-accent h-3 rounded-full transition-all duration-300 ease-in-out shadow-lg"
+            style={{ width: `${progress}%`, boxShadow: "0 0 20px rgba(212, 255, 0, 0.5)" }}
           ></div>
         </div>
-        <p className="text-xs text-right mt-1 text-zinc-500 dark:text-zinc-400">
-          Question {currentQuestion + 1} of {questions.length}
+        <p className="text-xs text-right mt-2 text-muted-foreground font-semibold">
+          {currentQuestion + 1} of {questions.length}
         </p>
       </div>
 
@@ -162,10 +162,10 @@ export default function FitnessAssessment() {
                       />
                       <Label
                         htmlFor="kg"
-                        className={`px-3 py-1 rounded-md cursor-pointer ${
+                        className={`px-3 py-1 rounded-md cursor-pointer font-semibold transition-colors ${
                           watchAllFields.weightUnit === "kg"
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300"
-                            : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                            ? "bg-accent text-accent-foreground"
+                            : "bg-secondary text-muted-foreground"
                         }`}
                         onClick={() => setValue("weightUnit", "kg")}
                       >
@@ -176,10 +176,10 @@ export default function FitnessAssessment() {
                       <input type="radio" id="lbs" value="lbs" {...register("weightUnit")} className="hidden" />
                       <Label
                         htmlFor="lbs"
-                        className={`px-3 py-1 rounded-md cursor-pointer ${
+                        className={`px-3 py-1 rounded-md cursor-pointer font-semibold transition-colors ${
                           watchAllFields.weightUnit === "lbs"
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300"
-                            : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                            ? "bg-accent text-accent-foreground"
+                            : "bg-secondary text-muted-foreground"
                         }`}
                         onClick={() => setValue("weightUnit", "lbs")}
                       >
@@ -217,10 +217,10 @@ export default function FitnessAssessment() {
                       />
                       <Label
                         htmlFor="cm"
-                        className={`px-3 py-1 rounded-md cursor-pointer ${
+                        className={`px-3 py-1 rounded-md cursor-pointer font-semibold transition-colors ${
                           watchAllFields.heightUnit === "cm"
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300"
-                            : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                            ? "bg-accent text-accent-foreground"
+                            : "bg-secondary text-muted-foreground"
                         }`}
                         onClick={() => setValue("heightUnit", "cm")}
                       >
@@ -231,10 +231,10 @@ export default function FitnessAssessment() {
                       <input type="radio" id="ft-in" value="ft-in" {...register("heightUnit")} className="hidden" />
                       <Label
                         htmlFor="ft-in"
-                        className={`px-3 py-1 rounded-md cursor-pointer ${
+                        className={`px-3 py-1 rounded-md cursor-pointer font-semibold transition-colors ${
                           watchAllFields.heightUnit === "ft-in"
-                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300"
-                            : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                            ? "bg-accent text-accent-foreground"
+                            : "bg-secondary text-muted-foreground"
                         }`}
                         onClick={() => setValue("heightUnit", "ft-in")}
                       >
@@ -526,13 +526,13 @@ export default function FitnessAssessment() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="flex justify-between pt-6">
+        <div className="flex justify-between pt-8 gap-4">
           <Button
             type="button"
             variant="outline"
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            className="flex items-center"
+            className="flex items-center border-border text-foreground hover:bg-secondary"
           >
             <ChevronLeft className="mr-2 h-4 w-4" /> Previous
           </Button>
@@ -541,12 +541,12 @@ export default function FitnessAssessment() {
             <Button
               type="button"
               onClick={handleNext}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground flex items-center font-bold shadow-lg hover:shadow-xl transition-all"
             >
               Next <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
-            <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Button type="submit" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-lg hover:shadow-xl transition-all">
               Get My Plan
             </Button>
           )}
