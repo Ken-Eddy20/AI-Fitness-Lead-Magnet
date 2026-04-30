@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react"
 import { format } from "date-fns"
@@ -45,7 +44,6 @@ const formSchema = z.object({
   mealsPerDay: z.string().min(1, "Please select number of meals"),
   biggestStruggle: z.string().min(1, "Please share your biggest struggle"),
   email: z.string().email("Please enter a valid email"),
-  wantCoaching: z.boolean().default(false),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -66,7 +64,6 @@ const questions = [
   "mealsPerDay",
   "biggestStruggle",
   "email",
-  "wantCoaching",
 ]
 
 export default function FitnessAssessment() {
@@ -87,7 +84,6 @@ export default function FitnessAssessment() {
       weightUnit: "kg",
       heightUnit: "cm",
       workoutPreference: [],
-      wantCoaching: false,
     },
   })
 
@@ -526,27 +522,7 @@ export default function FitnessAssessment() {
               </div>
             )}
 
-            {/* Coaching Question */}
-            {currentQuestion === 15 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">
-                  Would you like weekly check-ins from your coach for accountability & progress?
-                </h2>
-                <div className="flex items-center space-x-4 p-4 border rounded-lg">
-                  <Switch
-                    id="coaching"
-                    checked={watchAllFields.wantCoaching}
-                    onCheckedChange={(checked) => setValue("wantCoaching", checked)}
-                  />
-                  <div>
-                    <Label htmlFor="coaching" className="font-medium">
-                      Weekly Coach Check-ins
-                    </Label>
-                    <p className="text-sm text-zinc-500">Get personalized feedback and adjustments to your plan</p>
-                  </div>
-                </div>
-              </div>
-            )}
+
           </motion.div>
         </AnimatePresence>
 

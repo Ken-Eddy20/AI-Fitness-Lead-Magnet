@@ -56,6 +56,3 @@ This lead magnet is ideal for:
    - Recommends a **diet plan**
    - Displays a **follow-up CTA** to join coaching or subscribe
 4. **Lead Captured:** Coach receives the lead info for follow-up
-
-
-

@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Dumbbell, Salad, Clock, Award, Heart, Calendar, Download, CheckCircle, ArrowRight } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Dumbbell, Salad, Clock, Heart, Download, CheckCircle } from "lucide-react"
+import { generatePDF } from "@/app/actions/generate-pdf"
 
 type FormData = {
   weight: string
@@ -29,11 +29,52 @@ type FormData = {
   mealsPerDay: string
   biggestStruggle: string
   email: string
-  wantCoaching: boolean
 }
 
 export default function ResultsPage({ formData }: { formData: FormData }) {
   const [activeTab, setActiveTab] = useState("fitness")
+  const [isDownloading, setIsDownloading] = useState(false)
+
+  const handleDownloadPDF = async () => {
+    try {
+      setIsDownloading(true)
+      // Calculate BMI for PDF generation
+      const weightInKg =
+        formData.weightUnit === "kg" ? Number.parseFloat(formData.weight) : Number.parseFloat(formData.weight) * 0.453592
+      const heightInM =
+        formData.heightUnit === "cm"
+          ? Number.parseFloat(formData.height) / 100
+          : Number.parseFloat(formData.height) * 0.0254
+      const bmi = heightInM > 0 ? weightInKg / (heightInM * heightInM) : 0
+
+      // Call server action to generate PDF
+      const base64PDF = await generatePDF(formData, bmi)
+      
+      // Decode base64 and create blob
+      const byteCharacters = atob(base64PDF)
+      const byteNumbers = new Array(byteCharacters.length)
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      }
+      const byteArray = new Uint8Array(byteNumbers)
+      const blob = new Blob([byteArray], { type: "application/pdf" })
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = `fitness-plan-${Date.now()}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error("Error generating PDF:", error)
+      alert("Failed to generate PDF. Please try again.")
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   // Calculate BMI
   const weightInKg =
@@ -747,101 +788,20 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
         </TabsContent>
       </Tabs>
 
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Weekly Check-In System</h2>
-        <Card className="bg-zinc-50 dark:bg-zinc-900">
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg mb-1">Stay Accountable & Track Progress</h3>
-                <p className="text-zinc-600 dark:text-zinc-400">
-                  You'll receive weekly check-in emails to track your progress, adjust your plan as needed, and stay
-                  motivated on your fitness journey.
-                </p>
-              </div>
-              <div className="flex items-center">
-                <Calendar className="h-10 w-10 text-emerald-500 mr-3" />
-                <div>
-                  <p className="font-medium">First check-in:</p>
-                  <p className="text-zinc-600 dark:text-zinc-400">
-                    {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+
 
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Download Your Plan</h2>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Button className="flex items-center bg-emerald-600 hover:bg-emerald-700 text-white">
-            <Download className="mr-2 h-4 w-4" /> Download PDF
-          </Button>
-          <Button variant="outline" className="flex items-center">
-            <Calendar className="mr-2 h-4 w-4" /> Add to Calendar
-          </Button>
-        </div>
+        <Button
+          onClick={handleDownloadPDF}
+          disabled={isDownloading}
+          className="flex items-center bg-emerald-600 hover:bg-emerald-700 text-white"
+        >
+          <Download className="mr-2 h-4 w-4" /> {isDownloading ? "Generating PDF..." : "Download PDF"}
+        </Button>
       </div>
 
-      <div className="border-t pt-8 mt-8">
-        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 rounded-xl p-6 md:p-8">
-          <div className="flex flex-col md:flex-row gap-6 items-center">
-            <div className="md:w-2/3">
-              <Badge className="mb-2 bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
-                Premium Coaching
-              </Badge>
-              <h2 className="text-2xl font-bold mb-3">Want Personalized Guidance?</h2>
-              <p className="mb-4 text-zinc-700 dark:text-zinc-300">
-                Your custom plan is ready! Want a coach to walk you through it and make sure you stay consistent every
-                week?
-              </p>
-              <ul className="space-y-2 mb-6">
-                <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Weekly video check-ins with your coach</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Personalized plan adjustments based on your progress</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Access to private community for support</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Priority access to your coach via messaging</span>
-                </li>
-              </ul>
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto">
-                Join 1:1 Coaching <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-            <div className="md:w-1/3">
-              <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-md">
-                <div className="flex flex-col items-center text-center">
-                  <Avatar className="h-20 w-20 mb-4">
-                    <AvatarImage src="/placeholder.svg?height=80&width=80" alt="Coach" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <h3 className="font-bold text-lg">Coach John Davis</h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-3">Certified Personal Trainer</p>
-                  <div className="flex items-center mb-3">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Award key={star} className="h-4 w-4 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-sm italic">
-                    "I've helped over 500 clients transform their bodies and lives through personalized coaching."
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
 
       <div className="mt-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
         <p>Your plan has been sent to {formData.email}</p>
