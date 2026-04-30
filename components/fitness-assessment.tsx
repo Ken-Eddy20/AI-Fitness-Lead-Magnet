@@ -77,7 +77,6 @@ export default function FitnessAssessment() {
     watch,
     setValue,
     formState: { errors },
-    trigger,
     getValues,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -107,15 +106,58 @@ export default function FitnessAssessment() {
 
   const watchAllFields = watch()
 
+  const validateCurrentField = (): boolean => {
+    const currentField = questions[currentQuestion] as keyof FormData
+    const currentValue = getValues(currentField)
+
+    // Custom validation for each field type
+    switch (currentField) {
+      case "weight":
+        return typeof currentValue === "string" && currentValue.trim().length > 0
+      case "height":
+        return typeof currentValue === "string" && currentValue.trim().length > 0
+      case "age":
+        return typeof currentValue === "string" && currentValue.trim().length > 0
+      case "gender":
+        return currentValue === "Male" || currentValue === "Female" || currentValue === "Other"
+      case "goal":
+        return ["Lose weight", "Build muscle", "Maintain", "Get toned", "Improve health"].includes(
+          currentValue as string
+        )
+      case "targetWeight":
+        return typeof currentValue === "string" && currentValue.trim().length > 0
+      case "goalDate":
+        return true // Optional field
+      case "workoutPreference":
+        return Array.isArray(currentValue) && currentValue.length > 0
+      case "workoutDays":
+        return typeof currentValue === "string" && currentValue.trim().length > 0
+      case "gymAccess":
+        return currentValue === "Yes" || currentValue === "No" || currentValue === "Limited Equipment"
+      case "activityLevel":
+        return [
+          "Sedentary (mostly sitting)",
+          "Lightly active (some movement)",
+          "Moderately active (walk/workout a few times/week)",
+          "Very active (daily exercise/manual labor)",
+        ].includes(currentValue as string)
+      case "dietRestriction":
+        return typeof currentValue === "string" && currentValue.trim().length > 0
+      case "mealsPerDay":
+        return typeof currentValue === "string" && currentValue.trim().length > 0
+      case "biggestStruggle":
+        return typeof currentValue === "string" && currentValue.trim().length > 0
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return typeof currentValue === "string" && emailRegex.test(currentValue)
+      default:
+        return true
+    }
+  }
+
   const handleNext = async () => {
-    const currentField = questions[currentQuestion]
-    try {
-      const isValid = await trigger(currentField as any)
-      if (isValid) {
-        setCurrentQuestion((prev) => Math.min(prev + 1, questions.length - 1))
-      }
-    } catch (error) {
-      console.log("[v0] Validation error for field:", currentField, error)
+    if (validateCurrentField()) {
+      setCurrentQuestion((prev) => Math.min(prev + 1, questions.length - 1))
     }
   }
 
