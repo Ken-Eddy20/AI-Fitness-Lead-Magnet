@@ -78,12 +78,30 @@ export default function FitnessAssessment() {
     setValue,
     formState: { errors },
     trigger,
+    getValues,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
+    mode: "onBlur",
     defaultValues: {
+      weight: "",
       weightUnit: "kg",
+      height: "",
       heightUnit: "cm",
+      age: "",
+      gender: undefined,
+      goal: undefined,
+      targetWeight: "",
+      goalDate: undefined,
+      goalTimeframe: "",
       workoutPreference: [],
+      workoutDays: "",
+      gymAccess: undefined,
+      activityLevel: undefined,
+      dietRestriction: "",
+      otherDietDetails: "",
+      mealsPerDay: "",
+      biggestStruggle: "",
+      email: "",
     },
   })
 
@@ -91,10 +109,13 @@ export default function FitnessAssessment() {
 
   const handleNext = async () => {
     const currentField = questions[currentQuestion]
-    const isValid = await trigger(currentField as any)
-
-    if (isValid) {
-      setCurrentQuestion((prev) => Math.min(prev + 1, questions.length - 1))
+    try {
+      const isValid = await trigger(currentField as any)
+      if (isValid) {
+        setCurrentQuestion((prev) => Math.min(prev + 1, questions.length - 1))
+      }
+    } catch (error) {
+      console.log("[v0] Validation error for field:", currentField, error)
     }
   }
 
@@ -260,13 +281,14 @@ export default function FitnessAssessment() {
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">What is your gender?</h2>
                 <RadioGroup
+                  value={watchAllFields.gender || ""}
                   onValueChange={(value) => setValue("gender", value as "Male" | "Female" | "Other")}
                   className="space-y-3"
                 >
                   {["Male", "Female", "Other"].map((option) => (
                     <div key={option} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={option} />
-                      <Label htmlFor={option}>{option}</Label>
+                      <RadioGroupItem value={option} id={`gender-${option}`} />
+                      <Label htmlFor={`gender-${option}`}>{option}</Label>
                     </div>
                   ))}
                 </RadioGroup>
@@ -278,11 +300,15 @@ export default function FitnessAssessment() {
             {currentQuestion === 4 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">What is your goal?</h2>
-                <RadioGroup onValueChange={(value) => setValue("goal", value as any)} className="space-y-3">
+                <RadioGroup
+                  value={watchAllFields.goal || ""}
+                  onValueChange={(value) => setValue("goal", value as any)}
+                  className="space-y-3"
+                >
                   {["Lose weight", "Build muscle", "Maintain", "Get toned", "Improve health"].map((option) => (
                     <div key={option} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={option} />
-                      <Label htmlFor={option}>{option}</Label>
+                      <RadioGroupItem value={option} id={`goal-${option}`} />
+                      <Label htmlFor={`goal-${option}`}>{option}</Label>
                     </div>
                   ))}
                 </RadioGroup>
@@ -399,7 +425,7 @@ export default function FitnessAssessment() {
             {currentQuestion === 8 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">How many days per week can you realistically work out?</h2>
-                <Select onValueChange={(value) => setValue("workoutDays", value)}>
+                <Select value={watchAllFields.workoutDays || ""} onValueChange={(value) => setValue("workoutDays", value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select days per week" />
                   </SelectTrigger>
@@ -419,11 +445,15 @@ export default function FitnessAssessment() {
             {currentQuestion === 9 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">Do you have access to a gym or home equipment?</h2>
-                <RadioGroup onValueChange={(value) => setValue("gymAccess", value as any)} className="space-y-3">
+                <RadioGroup
+                  value={watchAllFields.gymAccess || ""}
+                  onValueChange={(value) => setValue("gymAccess", value as any)}
+                  className="space-y-3"
+                >
                   {["Yes", "No", "Limited Equipment"].map((option) => (
                     <div key={option} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={option} />
-                      <Label htmlFor={option}>{option}</Label>
+                      <RadioGroupItem value={option} id={`gym-${option}`} />
+                      <Label htmlFor={`gym-${option}`}>{option}</Label>
                     </div>
                   ))}
                 </RadioGroup>
@@ -435,7 +465,11 @@ export default function FitnessAssessment() {
             {currentQuestion === 10 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">What is your current activity level?</h2>
-                <RadioGroup onValueChange={(value) => setValue("activityLevel", value as any)} className="space-y-3">
+                <RadioGroup
+                  value={watchAllFields.activityLevel || ""}
+                  onValueChange={(value) => setValue("activityLevel", value as any)}
+                  className="space-y-3"
+                >
                   {[
                     "Sedentary (mostly sitting)",
                     "Lightly active (some movement)",
@@ -443,8 +477,8 @@ export default function FitnessAssessment() {
                     "Very active (daily exercise/manual labor)",
                   ].map((option) => (
                     <div key={option} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={option} />
-                      <Label htmlFor={option}>{option}</Label>
+                      <RadioGroupItem value={option} id={`activity-${option}`} />
+                      <Label htmlFor={`activity-${option}`}>{option}</Label>
                     </div>
                   ))}
                 </RadioGroup>
@@ -456,11 +490,15 @@ export default function FitnessAssessment() {
             {currentQuestion === 11 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">Do you follow a specific diet or have food restrictions?</h2>
-                <RadioGroup onValueChange={(value) => setValue("dietRestriction", value)} className="space-y-3">
+                <RadioGroup
+                  value={watchAllFields.dietRestriction || ""}
+                  onValueChange={(value) => setValue("dietRestriction", value)}
+                  className="space-y-3"
+                >
                   {["Vegan", "Vegetarian", "Keto", "Low-carb", "Halal", "No restrictions", "Other"].map((option) => (
                     <div key={option} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option} id={option} />
-                      <Label htmlFor={option}>{option}</Label>
+                      <RadioGroupItem value={option} id={`diet-${option}`} />
+                      <Label htmlFor={`diet-${option}`}>{option}</Label>
                     </div>
                   ))}
                 </RadioGroup>
