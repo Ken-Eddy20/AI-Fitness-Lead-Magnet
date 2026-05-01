@@ -66,7 +66,7 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
 
   const bmi = heightInM > 0 ? (weightInKg / (heightInM * heightInM)).toFixed(1) : "N/A"
 
-  // Calculate daily calories based on goal and activity level
+  // Calculate daily calories based on goal and workout frequency
   const calculateCalories = () => {
     // Base calculation using Harris-Benedict formula
     const age = Number.parseInt(formData.age)
@@ -78,14 +78,15 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
       bmr = 10 * weightInKg + 6.25 * (heightInM * 100) - 5 * age - 161
     }
 
-    // Activity multiplier
-    let activityMultiplier = 1.2 // Sedentary
-    if (formData.activityLevel.includes("Lightly active")) {
-      activityMultiplier = 1.375
-    } else if (formData.activityLevel.includes("Moderately active")) {
-      activityMultiplier = 1.55
-    } else if (formData.activityLevel.includes("Very active")) {
-      activityMultiplier = 1.725
+    // Activity multiplier based on workout frequency
+    const workoutDaysNum = Number.parseInt(formData.workoutDays)
+    let activityMultiplier = 1.375 // Default for 4-5 days/week in gym
+    if (workoutDaysNum <= 2) {
+      activityMultiplier = 1.3
+    } else if (workoutDaysNum === 3) {
+      activityMultiplier = 1.4
+    } else if (workoutDaysNum >= 6) {
+      activityMultiplier = 1.6
     }
 
     const tdee = Math.round(bmr * activityMultiplier)
@@ -130,7 +131,6 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
   // Generate workout plan based on preferences and days
   const generateWorkoutPlan = () => {
     const days = Number.parseInt(formData.workoutDays)
-    const hasGymAccess = formData.gymAccess === "Yes"
     const preferences = formData.workoutPreference
 
     let workoutPlan = []
