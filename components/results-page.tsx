@@ -184,75 +184,50 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
         ]
       }
     } else if (formData.goal === "Build muscle") {
-      if (hasGymAccess) {
-        if (days <= 3) {
-          workoutPlan = [
-            {
-              day: "Day 1",
-              focus: "Full Body",
-              exercises: ["Barbell Squats", "Bench Press", "Bent Over Rows", "Shoulder Press", "Bicep Curls"],
-            },
-            {
-              day: "Day 2",
-              focus: "Full Body",
-              exercises: ["Deadlifts", "Incline Press", "Pull-ups", "Lateral Raises", "Tricep Extensions"],
-            },
-            {
-              day: "Day 3",
-              focus: "Full Body",
-              exercises: ["Leg Press", "Dips", "Lat Pulldowns", "Face Pulls", "Leg Curls"],
-            },
-          ]
-        } else {
-          workoutPlan = [
-            {
-              day: "Day 1",
-              focus: "Chest & Triceps",
-              exercises: ["Bench Press", "Incline Dumbbell Press", "Chest Flyes", "Tricep Pushdowns", "Skull Crushers"],
-            },
-            {
-              day: "Day 2",
-              focus: "Back & Biceps",
-              exercises: ["Deadlifts", "Pull-ups", "Bent Over Rows", "Bicep Curls", "Hammer Curls"],
-            },
-            {
-              day: "Day 3",
-              focus: "Legs",
-              exercises: ["Squats", "Leg Press", "Romanian Deadlifts", "Leg Extensions", "Calf Raises"],
-            },
-            {
-              day: "Day 4",
-              focus: "Shoulders & Arms",
-              exercises: ["Shoulder Press", "Lateral Raises", "Face Pulls", "Tricep Extensions", "Bicep Curls"],
-            },
-            {
-              day: "Day 5",
-              focus: "Full Body",
-              exercises: ["Deadlifts", "Bench Press", "Pull-ups", "Shoulder Press", "Lunges"],
-            },
-          ]
-        }
+      if (days <= 3) {
+        workoutPlan = [
+          {
+            day: "Day 1",
+            focus: "Full Body",
+            exercises: ["Barbell Squats", "Bench Press", "Bent Over Rows", "Shoulder Press", "Bicep Curls"],
+          },
+          {
+            day: "Day 2",
+            focus: "Full Body",
+            exercises: ["Deadlifts", "Incline Press", "Pull-ups", "Lateral Raises", "Tricep Extensions"],
+          },
+          {
+            day: "Day 3",
+            focus: "Full Body",
+            exercises: ["Leg Press", "Dips", "Lat Pulldowns", "Face Pulls", "Leg Curls"],
+          },
+        ]
       } else {
         workoutPlan = [
           {
             day: "Day 1",
-            focus: "Push (Bodyweight)",
-            exercises: ["Push-ups (4 sets)", "Pike Push-ups", "Tricep Dips", "Decline Push-ups"],
+            focus: "Chest & Triceps",
+            exercises: ["Bench Press", "Incline Dumbbell Press", "Chest Flyes", "Tricep Pushdowns", "Skull Crushers"],
           },
           {
             day: "Day 2",
-            focus: "Pull (Bodyweight)",
-            exercises: [
-              "Pull-ups/Rows with household items",
-              "Superman Holds",
-              "Bicep Curls with makeshift weights",
-              "Doorway Rows",
-            ],
+            focus: "Back & Biceps",
+            exercises: ["Deadlifts", "Pull-ups", "Bent Over Rows", "Bicep Curls", "Hammer Curls"],
           },
           {
             day: "Day 3",
-            focus: "Legs (Bodyweight)",
-            exercises: ["Bodyweight Squats (4 sets)", "Lunges", "Glute Bridges", "Calf Raises", "Wall Sits"],
+            focus: "Legs",
+            exercises: ["Squats", "Leg Press", "Romanian Deadlifts", "Leg Extensions", "Calf Raises"],
+          },
+          {
+            day: "Day 4",
+            focus: "Shoulders & Arms",
+            exercises: ["Shoulder Press", "Lateral Raises", "Face Pulls", "Tricep Extensions", "Bicep Curls"],
+          },
+          {
+            day: "Day 5",
+            focus: "Full Body",
+            exercises: ["Deadlifts", "Bench Press", "Pull-ups", "Shoulder Press", "Lunges"],
           },
         ]
       }
@@ -306,7 +281,6 @@ export default function ResultsPage({ formData }: { formData: FormData }) {
 
   // Generate meal plan based on diet restrictions and calories
   const generateMealPlan = () => {
-    const meals = Number.parseInt(formData.mealsPerDay)
     const dietType = formData.dietRestriction
 
     let mealPlan = []
